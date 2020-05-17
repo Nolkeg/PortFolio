@@ -12,6 +12,7 @@ var $modals = getAll('.modal');
 var $modalTriggers = getAll('.modal-trigger');
 var $modalCloses = getAll('.modal-card-head .delete, .modal-card-foot .button');
 
+
 if ($modalTriggers.length > 0) {
     $modalTriggers.forEach(function ($el) {
         $el.addEventListener('click', function () {
@@ -25,8 +26,19 @@ if ($modalCloses.length > 0) {
     $modalCloses.forEach(function ($el) {
         $el.addEventListener('click', function () {
             closeModals();
+            stopAllYouTubeVideos();
         });
     });
+}
+
+var stopAllYouTubeVideos = () => { 
+    var iframes = document.querySelectorAll('iframe');
+    
+    Array.prototype.forEach.call(iframes, iframe => { 
+
+    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', 
+    func: 'stopVideo' }), '*');
+   });
 }
 
 function openModal(target) {
@@ -54,14 +66,16 @@ function closeModals() {
     $modals.forEach(function ($el) {
         $el.classList.remove('is-active');
     });
+    
 }
+
 
 // Functions
 
 function initCarousel(id) {
     return new Flickity('#' + id, {
         imagesLoaded: true,
-        adaptiveHeight: false // https://github.com/metafizzy/flickity/issues/11
+        adaptiveHeight: false, // https://github.com/metafizzy/flickity/issues/11
     });
 }
 
